@@ -1,0 +1,43 @@
+https://snakemake.readthedocs.io/en/stable/snakefiles/deployment.html
+[File structure]
+
+Notes from Johann:
+
+ben vernot  3:12 PM
+Hey guys - I want to try to be a good scientist, and make some of my code more "reproducible," as the kids say. This particular project is currently set up as several programs / bash scripts that I run sequentially, and it generates a *ton* of intermediate files. I was thinking I'd put those all together in a snakemake script, and try not to have it rely on our local file structure. Is that the preferred way?
+One other problem - it requires some other software (treetime). Is it ok to just say "you need to install this" in the readme?
+
+Johann  3:18 PM
+I see treetime is in Bioconda. If you’re using Snakemake, it’s pretty trivial to make it run the relevant rule in a conda environment that has treetime installed.
+3:20
+If you use a standard Snakemake file layout as per https://snakemake.readthedocs.io/en/stable/snakefiles/deployment.html, then you’ll have a (say) workflow/envs/treetime.yaml that looks something like this…
+3:21
+Untitled 
+name: ben_workflow_treetime
+channels:
+  - bioconda
+dependencies:
+  - treetime==0.8.4
+
+
+3:21
+Then in the Snakefile, you’ll just have…
+3:23
+Untitled 
+rule treetime              # or whatever...
+    conda:
+        "envs/treetime.yaml"
+# ...rest of rule goes here
+
+
+3:23
+All assuming you’re using Snakemake. That’s of course just one option. :grimacing:
+
+ben vernot  3:25 PM
+This is great, thanks! I didn't know about the "standard snakemake file layout" - that's also really helpful.
+
+Johann  3:32 PM
+I forgot to add: You’ll have to run snakemake with --use-conda, or with --profile pointing to a profile file that has use-conda: true
+
+Johann  3:45 PM
+@ben vernot … you could stick your pipeline up on vcs.eva and we can help out. (No guarantees how much time I’ll have in the intermediate future…)
